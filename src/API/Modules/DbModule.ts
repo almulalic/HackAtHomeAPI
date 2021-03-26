@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { MysqlConnectionOptions } from "typeorm/driver/mysql/MysqlConnectionOptions";
-import { Customer, TokenLog } from "../../Models/Entities";
+import { User, Post, Category, TokenLog } from "../../Models/Entities";
 
 require("dotenv").config();
 
@@ -27,7 +27,7 @@ const {
       database: DB_TABLE_NAME,
       synchronize: Boolean(Number(DB_SYNC)),
       logging: Boolean(Number(DB_LOGGING)),
-      entities: [Customer, Image, TokenLog],
+      entities: [User, Post, Category, TokenLog],
       cli: {
         entitiesDir: "src/Models/Entities",
         migrationsDir: "src/Models/Migrations",

@@ -1,11 +1,11 @@
-import { EntityManager } from 'typeorm';
-import { TokenLog } from '../Models/Entities';
+import { EntityManager } from "typeorm";
+import { TokenLog } from "../Models/Entities";
 export declare enum TokenType {
     AccountConfirmationToken = 1,
     PasswordResetToken = 2
 }
 export declare enum EntityType {
-    Customer = 1
+    User = 1
 }
 export declare class TokenLogger {
     private readonly EntityManager;

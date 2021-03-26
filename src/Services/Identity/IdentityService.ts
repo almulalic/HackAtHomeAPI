@@ -11,13 +11,13 @@ import { EntityManager } from "typeorm";
 import { Credential } from "../../Common/Credential";
 import { InjectEntityManager } from "@nestjs/typeorm";
 import { RefreshTokenDTO } from "./DTO/RefreshTokenDTO";
-import { TokenCustomerDTO } from "./DTO/TokenCustomerDTO";
-import { Customer, TokenLog } from "../../Models/Entities";
+import { TokenUserDTO } from "./DTO/TokenUserDTO";
 import { TokenLogger, TokenType } from "../../Common/TokenLogger";
 import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
 import * as responseMessages from "../../../responseMessages.config.json";
 import { Mailer } from "../../Microservices/Mail/Mailer";
 import { IIdentityService } from "../Contracts/IIdentityService";
+import { User, TokenLog } from "../../Models/Entities";
 
 @Injectable()
 export class IdentityService implements IIdentityService {
@@ -28,77 +28,70 @@ export class IdentityService implements IIdentityService {
   ) {}
 
   public async IsEmailTaken(email: string): Promise<boolean> {
-    return (await this.EntityManager.getRepository(Customer).findOne({ email: email })) !== undefined;
+    return (await this.EntityManager.getRepository(User).findOne({ email: email })) !== undefined;
   }
 
   public async Register(dto: RegisterDTO): Promise<string> {
-    let customer: Customer = await this.EntityManager.getRepository(Customer).findOne({ email: dto.email });
-    if (customer)
+    let user: User = await this.EntityManager.getRepository(User).findOne({ email: dto.email });
+    if (user)
       throw new HttpException(responseMessages.identity.register.emailAlreadyInUse, HttpStatus.BAD_REQUEST);
 
-    let newCustomer: Customer = dto;
-    newCustomer.password = await Credential.EncryptPassword(newCustomer.password);
-    newCustomer.id = (
-      await this.EntityManager.getRepository(Customer).insert(newCustomer)
-    ).generatedMaps[0].id;
+    let newUser: User = dto;
+    newUser.password = await Credential.EncryptPassword(newUser.password);
+    newUser.id = (await this.EntityManager.getRepository(User).insert(newUser)).generatedMaps[0].id;
 
-    let confirmationToken: string = await Credential.GenerateConfirmationToken(newCustomer.id, "1d");
+    let confirmationToken: string = await Credential.GenerateConfirmationToken(newUser.id, "1d");
     await this.TokenLogger.AddNewTokenLog(
       confirmationToken,
       "1d",
       TokenType.AccountConfirmationToken,
-      newCustomer.id
+      newUser.id
     );
-    let confirmationMailResponse = await Mailer.SendConfirmationEmail(newCustomer, confirmationToken);
+    let confirmationMailResponse = await Mailer.SendConfirmationEmail(newUser, confirmationToken);
 
     return responseMessages.identity.register.success + confirmationMailResponse;
   }
 
   public async ResendConfirmationToken(dto: ResendConfirmationDTO): Promise<string> {
-    let customer: Customer = await this.EntityManager.getRepository(Customer).findOne({ email: dto.email });
+    let user: User = await this.EntityManager.getRepository(User).findOne({ email: dto.email });
 
-    if (!customer)
+    if (!User)
       throw new HttpException(
-        responseMessages.identity.resendConfirmation.nonExistingCustomer,
+        responseMessages.identity.resendConfirmation.nonExistingUser,
         HttpStatus.BAD_REQUEST
       );
-    else if (customer.isConfirmed)
+    else if (user.isConfirmed)
       throw new HttpException(
         responseMessages.identity.resendConfirmation.alreadyConfirmed,
         HttpStatus.BAD_REQUEST
       );
 
-    let newConfirmationToken = await Credential.GenerateConfirmationToken(customer.id, "1d");
-    this.TokenLogger.AddNewTokenLog(
-      newConfirmationToken,
-      "1d",
-      TokenType.AccountConfirmationToken,
-      customer.id
-    );
+    let newConfirmationToken = await Credential.GenerateConfirmationToken(user.id, "1d");
+    this.TokenLogger.AddNewTokenLog(newConfirmationToken, "1d", TokenType.AccountConfirmationToken, user.id);
 
-    return await Mailer.ResendConfirmationEmail(customer, newConfirmationToken);
+    return await Mailer.ResendConfirmationEmail(user, newConfirmationToken);
   }
 
   public async ChangeConfirmationEmail(dto: ChangeConfirmationEmailDTO): Promise<string> {
-    let customer: Customer = await this.EntityManager.getRepository(Customer).findOne({ email: dto.email });
+    let user: User = await this.EntityManager.getRepository(User).findOne({ email: dto.email });
 
-    if (!customer)
+    if (!user)
       throw new HttpException(
-        responseMessages.identity.resendConfirmation.nonExistingCustomer,
+        responseMessages.identity.resendConfirmation.nonExistingUser,
         HttpStatus.BAD_REQUEST
       );
-    else if (customer.isConfirmed)
+    else if (user.isConfirmed)
       throw new HttpException(
         responseMessages.identity.resendConfirmation.alreadyConfirmed,
         HttpStatus.BAD_REQUEST
       );
 
-    if (!(await Credential.DecryptPassword(dto.password, customer.password)))
-      throw new HttpException(responseMessages.identity.login.customerNotFound, HttpStatus.FORBIDDEN);
+    if (!(await Credential.DecryptPassword(dto.password, user.password)))
+      throw new HttpException(responseMessages.identity.login.userNotFound, HttpStatus.FORBIDDEN);
 
-    customer.email = dto.newEmail;
+    user.email = dto.newEmail;
 
-    await this.EntityManager.getRepository(Customer).save(customer);
+    await this.EntityManager.getRepository(User).save(user);
 
     return responseMessages.identity.resendConfirmation.success;
   }
@@ -123,39 +116,39 @@ export class IdentityService implements IIdentityService {
       );
     }
 
-    let confirmedCustomer: Customer = await this.EntityManager.getRepository(Customer).findOne({
+    let confirmedUser: User = await this.EntityManager.getRepository(User).findOne({
       id: decodedToken.identityId,
     });
 
-    if (confirmedCustomer.isConfirmed)
+    if (confirmedUser.isConfirmed)
       throw new HttpException(
         responseMessages.identity.confirmIdentity.alreadyConfirmed,
         HttpStatus.BAD_REQUEST
       );
 
-    confirmedCustomer.isConfirmed = true;
+    confirmedUser.isConfirmed = 1;
 
     await this.TokenLogger.InvalidateToken(tokenLog);
 
-    await this.EntityManager.getRepository(Customer).save(confirmedCustomer);
+    await this.EntityManager.getRepository(User).save(confirmedUser);
 
     return responseMessages.identity.confirmIdentity.success;
   }
 
   public async ResetPassword(dto: ResetPasswordDTO): Promise<string> {
-    let customer: Customer = await this.EntityManager.getRepository(Customer).findOne({ email: dto.email });
+    let user: User = await this.EntityManager.getRepository(User).findOne({ email: dto.email });
 
-    if (!customer)
+    if (!user)
       throw new HttpException(
         responseMessages.identity.passwordResetRequest.nonExistingIdentity,
         HttpStatus.BAD_REQUEST
       );
 
-    let token = await Credential.GenerateResetPasswordToken(customer, "24h");
+    let token = await Credential.GenerateResetPasswordToken(user, "24h");
 
-    this.TokenLogger.AddNewTokenLog(token, "24h", TokenType.PasswordResetToken, customer.id);
+    this.TokenLogger.AddNewTokenLog(token, "24h", TokenType.PasswordResetToken, user.id);
 
-    await Mailer.SendResetPasswordEmail(customer, token);
+    await Mailer.SendResetPasswordEmail(user, token);
 
     return responseMessages.identity.passwordResetRequest.success;
   }
@@ -180,44 +173,43 @@ export class IdentityService implements IIdentityService {
       );
     }
 
-    let customer: Customer = await this.EntityManager.getRepository(Customer).findOne({
+    let user: User = await this.EntityManager.getRepository(User).findOne({
       id: decodedToken.id,
     });
 
-    if (!customer)
+    if (!user)
       throw new HttpException(
         responseMessages.identity.passwordResetConfirmation.nonExistingIdentity,
         HttpStatus.BAD_REQUEST
       );
 
-    customer.password = await Credential.EncryptPassword(dto.newPassword);
+    user.password = await Credential.EncryptPassword(dto.newPassword);
 
     await this.TokenLogger.InvalidateToken(tokenLog);
 
-    await this.EntityManager.getRepository(Customer).save(customer);
+    await this.EntityManager.getRepository(User).save(user);
 
     return responseMessages.identity.passwordResetConfirmation.success;
   }
 
   public async Login(dto: LoginDTO): Promise<LoginResponseDTO> {
-    let customer: Customer = await this.EntityManager.getRepository(Customer).findOne({ email: dto.email });
+    let user: User = await this.EntityManager.getRepository(User).findOne({ email: dto.email });
 
-    if (!customer)
-      throw new HttpException(responseMessages.identity.login.customerNotFound, HttpStatus.NOT_FOUND);
+    if (!user) throw new HttpException(responseMessages.identity.login.userNotFound, HttpStatus.NOT_FOUND);
 
-    if (!customer.isConfirmed)
+    if (!user.isConfirmed)
       throw new HttpException(responseMessages.identity.login.notConfirmed, HttpStatus.BAD_REQUEST);
 
-    if (!(await Credential.DecryptPassword(dto.password, customer.password)))
+    if (!(await Credential.DecryptPassword(dto.password, user.password)))
       throw new HttpException(responseMessages.identity.login.wrongPassword, HttpStatus.FORBIDDEN);
 
-    let tokenUser: TokenCustomerDTO = new TokenCustomerDTO(customer);
+    let tokenUser: TokenUserDTO = new TokenUserDTO(user);
 
     let refreshToken = await Credential.GenerateRefreshToken(tokenUser, "1h");
 
-    customer.refreshToken = refreshToken;
+    user.refreshToken = refreshToken;
 
-    await this.EntityManager.getRepository(Customer).save(customer);
+    await this.EntityManager.getRepository(User).save(user);
 
     return {
       access_token: await Credential.GenerateAccessToken(tokenUser, "1h"),
@@ -232,12 +224,11 @@ export class IdentityService implements IIdentityService {
         HttpStatus.UNAUTHORIZED
       );
 
-    let customer: Customer = await this.EntityManager.getRepository(Customer).findOne({
+    let user: User = await this.EntityManager.getRepository(User).findOne({
       refreshToken: dto.refreshToken,
     });
 
-    if (!customer)
-      throw new HttpException(responseMessages.identity.login.customerNotFound, HttpStatus.NOT_FOUND);
+    if (!user) throw new HttpException(responseMessages.identity.login.userNotFound, HttpStatus.NOT_FOUND);
 
     if (!(await Credential.VerifyJWT(dto.refreshToken)))
       throw new HttpException(
@@ -246,7 +237,7 @@ export class IdentityService implements IIdentityService {
       );
 
     return {
-      accessToken: await Credential.GenerateAccessToken(new TokenCustomerDTO(customer), "1h"),
+      accessToken: await Credential.GenerateAccessToken(new TokenUserDTO(user), "1h"),
     };
   }
 }

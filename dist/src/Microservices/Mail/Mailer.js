@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Mailer = void 0;
 const sgMail = require("@sendgrid/mail");
 const mailerConfig = require("../../../mailer.config.json");
-require('dotenv').config();
+require("dotenv").config();
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 class Mailer {
 }
@@ -51,7 +51,7 @@ Mailer.SendResetPasswordEmail = async (identity, token) => {
             .send({
             to: identity.email,
             from: mailerConfig.noReply,
-            subject: 'Reset password empero',
+            subject: "Reset password empero",
             html: ` Please click this link to proceed to password reset <a href="${url}">${url}</a>`,
         })
             .then(() => {
@@ -71,11 +71,11 @@ Mailer.SendGenericEmail = async (body) => {
         html: body.html,
     })
         .then(() => {
-        return 'EmailSentSuccessfully';
+        return "EmailSentSuccessfully";
     })
         .catch((err) => {
         console.log(err);
-        return 'EmailNotSent';
+        return "EmailNotSent";
     });
 };
 //# sourceMappingURL=Mailer.js.map

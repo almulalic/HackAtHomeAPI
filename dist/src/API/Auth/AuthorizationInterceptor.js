@@ -12,7 +12,7 @@ const common_1 = require("@nestjs/common");
 const Enumerations_1 = require("../../Common/Enumerations");
 let AuthorizationInterceptor = class AuthorizationInterceptor {
     intercept(context, next) {
-        if (context.switchToHttp().getRequest().currentCustomer.role !== Enumerations_1.RoleTypes.Admin)
+        if (context.switchToHttp().getRequest().currentUser.role !== Enumerations_1.RoleTypes.Admin)
             throw new common_1.HttpException(responseMessages.authorization.noPermission, common_1.HttpStatus.FORBIDDEN);
         return next.handle();
     }

@@ -12,13 +12,13 @@ const responseMessages = require("../../../responseMessages.config.json");
 const common_1 = require("@nestjs/common");
 let AuthenticationInterceptor = class AuthenticationInterceptor {
     intercept(context, next) {
-        let token = context.switchToHttp().getRequest().headers['x-token'];
+        let token = context.switchToHttp().getRequest().headers["x-token"];
         if (token) {
             token = token.slice(7);
             jwt.verify(token, process.env.JWT_ACCESS_SECRET, (err, decodedToken) => {
                 if (err)
                     throw new common_1.HttpException(responseMessages.authorization.tokenMalformet, common_1.HttpStatus.UNAUTHORIZED);
-                context.switchToHttp().getRequest().currentCustomer = Object.values(decodedToken)[0];
+                context.switchToHttp().getRequest().currentUser = Object.values(decodedToken)[0];
             });
         }
         else

@@ -5,7 +5,7 @@
       "success": "Uspješno ste se registrovali na Empero Home Webshop."
     },
     "login": {
-      "customerNotFound": "Korisnik nije pronađen!",
+      "userNotFound": "Korisnik nije pronađen!",
       "wrongPassword": "Pogrešna lozinka!",
       "notConfirmed": "Vaš račun nije potvrđen, molimo vas da provjerite vašu email adresu.",
       "success": "Usješno ste se prijavili. Dobrodošli!"
@@ -16,7 +16,7 @@
       "success": "Usješno ste se prijavili. Dobrodošli!"
     },
     "resendConfirmation": {
-      "nonExistingCustomer": "Korisnički račun sa ovom email adresom nije pronađen!",
+      "nonExistingUser": "Korisnički račun sa ovom email adresom nije pronađen!",
       "alreadyConfirmed": "Korisnički račun je već potvrđen!",
       "success": "Zahtjev za ponovnu konfirmaciju uspješno poslan na vašu email adresu!"
     },

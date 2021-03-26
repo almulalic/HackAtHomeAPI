@@ -1,5 +1,5 @@
-import { Customer } from '../Models/Entities';
-import { TokenCustomerDTO } from '../Services/Identity/DTO';
+import { User } from "../Models/Entities";
+import { TokenUserDTO } from "../Services/Identity/DTO";
 export declare class Credential {
     private static readonly _salt;
     private static readonly _jwtEmailSecret;
@@ -12,7 +12,7 @@ export declare class Credential {
     static GenerateConfirmationToken(id: number, duration: string): Promise<string>;
     static DecodeRegisterConfirmationToken(token: string): Promise<any>;
     static DecodePasswordResetToken(token: string): Promise<any>;
-    static GenerateAccessToken(tokenCustomer: TokenCustomerDTO, duration: string): Promise<string>;
-    static GenerateRefreshToken(tokenCustomer: TokenCustomerDTO, duration: string): Promise<string>;
-    static GenerateResetPasswordToken(identity: Customer, duration: string): Promise<string>;
+    static GenerateAccessToken(TokenUser: TokenUserDTO, duration: string): Promise<string>;
+    static GenerateRefreshToken(TokenUser: TokenUserDTO, duration: string): Promise<string>;
+    static GenerateResetPasswordToken(identity: User, duration: string): Promise<string>;
 }

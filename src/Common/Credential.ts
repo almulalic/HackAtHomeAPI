@@ -1,7 +1,7 @@
-import * as bcrypt from 'bcrypt';
-import * as jwt from 'jsonwebtoken';
-import { Customer } from '../Models/Entities';
-import { TokenCustomerDTO } from '../Services/Identity/DTO';
+import * as bcrypt from "bcrypt";
+import * as jwt from "jsonwebtoken";
+import { User } from "../Models/Entities";
+import { TokenUserDTO } from "../Services/Identity/DTO";
 
 export class Credential {
   private static readonly _salt: number = Number(process.env.PASSWORD_SALT);
@@ -47,19 +47,19 @@ export class Credential {
     return jwt.verify(token, Credential._resetPasswordResetSecret);
   }
 
-  public static async GenerateAccessToken(tokenCustomer: TokenCustomerDTO, duration: string): Promise<string> {
-    return await jwt.sign({ currentCustomer: tokenCustomer }, Credential._jwtAccessSecret, {
+  public static async GenerateAccessToken(TokenUser: TokenUserDTO, duration: string): Promise<string> {
+    return await jwt.sign({ currentUser: TokenUser }, Credential._jwtAccessSecret, {
       expiresIn: duration,
     });
   }
 
-  public static async GenerateRefreshToken(tokenCustomer: TokenCustomerDTO, duration: string): Promise<string> {
-    return await jwt.sign({ currentCustomer: tokenCustomer }, Credential._jwtRefreshSecret, {
+  public static async GenerateRefreshToken(TokenUser: TokenUserDTO, duration: string): Promise<string> {
+    return await jwt.sign({ currentCustomer: TokenUser }, Credential._jwtRefreshSecret, {
       expiresIn: duration,
     });
   }
 
-  public static async GenerateResetPasswordToken(identity: Customer, duration: string): Promise<string> {
+  public static async GenerateResetPasswordToken(identity: User, duration: string): Promise<string> {
     return await jwt.sign({ id: identity.id }, Credential._resetPasswordResetSecret, {
       expiresIn: duration,
     });

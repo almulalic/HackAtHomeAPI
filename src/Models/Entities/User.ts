@@ -1,7 +1,9 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Post } from "./Post";
+import { TokenLog } from "./TokenLog";
 
-@Entity("Customer", { schema: "heroku_1a6e6e8496717d8" })
-export class Customer {
+@Entity("user", { schema: "heroku_ce952358d978f73" })
+export class User {
   @PrimaryGeneratedColumn({ type: "int", name: "id" })
   id: number;
 
@@ -17,11 +19,14 @@ export class Customer {
   @Column("smallint", { name: "role", default: () => "'0'" })
   role: number;
 
-  @Column("tinyint", { name: "isConfirmed", default: () => false })
-  isConfirmed: boolean;
+  @Column("tinyint", { name: "isConfirmed", default: () => "'0'" })
+  isConfirmed: number;
 
   @Column("varchar", { name: "address", length: 100 })
   address: string;
+
+  @Column("date", { name: "dateOfBirh" })
+  dateOfBirh: string;
 
   @Column("varchar", { name: "telephoneNumber", length: 100 })
   telephoneNumber: string;
@@ -34,18 +39,22 @@ export class Customer {
 
   @Column("timestamp", {
     name: "createdAt",
-    select: false,
     default: () => "CURRENT_TIMESTAMP",
   })
   createdAt: Date;
 
   @Column("timestamp", {
     name: "modifiedAt",
-    select: false,
     default: () => "CURRENT_TIMESTAMP",
   })
   modifiedAt: Date;
 
-  @Column("datetime", { name: "archivedAt", select: false, nullable: true })
+  @Column("datetime", { name: "archivedAt", nullable: true })
   archivedAt: Date | null;
+
+  @OneToMany(() => Post, (post) => post.user)
+  posts: Post[];
+
+  @OneToMany(() => TokenLog, (tokenlog) => tokenlog.user)
+  tokenlogs: TokenLog[];
 }

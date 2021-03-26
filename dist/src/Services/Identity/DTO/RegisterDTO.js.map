@@ -1,1 +1,1 @@
-{"version":3,"file":"RegisterDTO.js","sourceRoot":"","sources":["../../../../../src/Services/Identity/DTO/RegisterDTO.ts"],"names":[],"mappings":";;;AAAA,uDAAoD;AAEpD,MAAa,WAAY,SAAQ,mBAAQ;CAOxC;AAPD,kCAOC"}
+{"version":3,"file":"RegisterDTO.js","sourceRoot":"","sources":["../../../../../src/Services/Identity/DTO/RegisterDTO.ts"],"names":[],"mappings":";;;AAAA,uDAAgD;AAEhD,MAAa,WAAY,SAAQ,eAAI;CAOpC;AAPD,kCAOC"}

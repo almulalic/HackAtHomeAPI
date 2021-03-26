@@ -5,7 +5,7 @@ export enum GridFilterType {
 }
 
 export enum RoleTypes {
-  Customer = 0,
+  User = 0,
   Admin = 1,
 }
 

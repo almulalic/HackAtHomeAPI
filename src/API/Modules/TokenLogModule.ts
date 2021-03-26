@@ -1,5 +1,5 @@
-import { Module } from '@nestjs/common';
-import { TokenLogger } from '../../Common/TokenLogger';
+import { Module } from "@nestjs/common";
+import { TokenLogger } from "../../Common/TokenLogger";
 
 @Module({
   controllers: [],

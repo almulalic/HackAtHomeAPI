@@ -1,18 +1,18 @@
-import { EntityManager } from 'typeorm';
-import { TokenLog } from '../Models/Entities';
-import { Injectable } from '@nestjs/common';
-import { InjectEntityManager } from '@nestjs/typeorm';
-import { Credential } from './Credential';
-import { DateTime } from 'luxon';
-import { classToPlain } from 'class-transformer';
+import { EntityManager } from "typeorm";
+import { TokenLog } from "../Models/Entities";
+import { Injectable } from "@nestjs/common";
+import { InjectEntityManager } from "@nestjs/typeorm";
+import { Credential } from "./Credential";
+import { DateTime } from "luxon";
+import { classToPlain } from "class-transformer";
 
 function StringTimeToSeconds(duration: string) {
   let timeValue: number = Number(duration.substr(0, duration.length - 1));
 
-  if (duration.includes('d')) return timeValue * 3600 * 24;
-  else if (duration.includes('h')) return timeValue * 3600;
-  else if (duration.includes('m')) return timeValue * 60;
-  else if (duration.includes('s')) return timeValue;
+  if (duration.includes("d")) return timeValue * 3600 * 24;
+  else if (duration.includes("h")) return timeValue * 3600;
+  else if (duration.includes("m")) return timeValue * 60;
+  else if (duration.includes("s")) return timeValue;
 
   return timeValue;
 }
@@ -25,7 +25,7 @@ export enum TokenType {
 }
 
 export enum EntityType {
-  Customer = 1,
+  User = 1,
 }
 
 @Injectable()
@@ -39,9 +39,9 @@ export class TokenLogger {
   public async ClearPreviousTokens(tokenType: TokenType, identityId: number): Promise<boolean> {
     let previousTokens: TokenLog[] = await this.tokenLogScope
       .createQueryBuilder()
-      .where('TokenLog.identityId = :identityId', { identityId: identityId })
-      .andWhere('TokenLog.tokenType = :tokenType', { tokenType: tokenType })
-      .andWhere('TokenLog.isValid = 1')
+      .where("TokenLog.identityId = :identityId", { identityId: identityId })
+      .andWhere("TokenLog.tokenType = :tokenType", { tokenType: tokenType })
+      .andWhere("TokenLog.isValid = 1")
       .getMany();
 
     previousTokens.forEach(async (token: TokenLog) => {
@@ -72,11 +72,11 @@ export class TokenLogger {
   public async AddNewTokenLog(token: string, duration: string, tokenType: TokenType, identityId: number) {
     let clearResponse = await this.ClearPreviousTokens(tokenType, identityId);
 
-    if (clearResponse !== true) throw new Error('Token clear belaj');
+    if (clearResponse !== true) throw new Error("Token clear belaj");
 
     let tokenLog = new TokenLog();
 
-    tokenLog.identityId = identityId;
+    tokenLog.userId = identityId;
     tokenLog.token = token;
     tokenLog.duration = StringTimeToSeconds(duration);
     tokenLog.isValid = true;

@@ -9,7 +9,7 @@ var GridFilterType;
 })(GridFilterType = exports.GridFilterType || (exports.GridFilterType = {}));
 var RoleTypes;
 (function (RoleTypes) {
-    RoleTypes[RoleTypes["Customer"] = 0] = "Customer";
+    RoleTypes[RoleTypes["User"] = 0] = "User";
     RoleTypes[RoleTypes["Admin"] = 1] = "Admin";
 })(RoleTypes = exports.RoleTypes || (exports.RoleTypes = {}));
 var ImageType;

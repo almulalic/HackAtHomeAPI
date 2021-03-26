@@ -37,13 +37,13 @@ class Credential {
     static async DecodePasswordResetToken(token) {
         return jwt.verify(token, Credential._resetPasswordResetSecret);
     }
-    static async GenerateAccessToken(tokenCustomer, duration) {
-        return await jwt.sign({ currentCustomer: tokenCustomer }, Credential._jwtAccessSecret, {
+    static async GenerateAccessToken(TokenUser, duration) {
+        return await jwt.sign({ currentUser: TokenUser }, Credential._jwtAccessSecret, {
             expiresIn: duration,
         });
     }
-    static async GenerateRefreshToken(tokenCustomer, duration) {
-        return await jwt.sign({ currentCustomer: tokenCustomer }, Credential._jwtRefreshSecret, {
+    static async GenerateRefreshToken(TokenUser, duration) {
+        return await jwt.sign({ currentCustomer: TokenUser }, Credential._jwtRefreshSecret, {
             expiresIn: duration,
         });
     }

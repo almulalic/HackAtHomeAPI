@@ -21,13 +21,13 @@ const luxon_1 = require("luxon");
 const class_transformer_1 = require("class-transformer");
 function StringTimeToSeconds(duration) {
     let timeValue = Number(duration.substr(0, duration.length - 1));
-    if (duration.includes('d'))
+    if (duration.includes("d"))
         return timeValue * 3600 * 24;
-    else if (duration.includes('h'))
+    else if (duration.includes("h"))
         return timeValue * 3600;
-    else if (duration.includes('m'))
+    else if (duration.includes("m"))
         return timeValue * 60;
-    else if (duration.includes('s'))
+    else if (duration.includes("s"))
         return timeValue;
     return timeValue;
 }
@@ -38,7 +38,7 @@ var TokenType;
 })(TokenType = exports.TokenType || (exports.TokenType = {}));
 var EntityType;
 (function (EntityType) {
-    EntityType[EntityType["Customer"] = 1] = "Customer";
+    EntityType[EntityType["User"] = 1] = "User";
 })(EntityType = exports.EntityType || (exports.EntityType = {}));
 let TokenLogger = class TokenLogger {
     constructor(EntityManager) {
@@ -48,9 +48,9 @@ let TokenLogger = class TokenLogger {
     async ClearPreviousTokens(tokenType, identityId) {
         let previousTokens = await this.tokenLogScope
             .createQueryBuilder()
-            .where('TokenLog.identityId = :identityId', { identityId: identityId })
-            .andWhere('TokenLog.tokenType = :tokenType', { tokenType: tokenType })
-            .andWhere('TokenLog.isValid = 1')
+            .where("TokenLog.identityId = :identityId", { identityId: identityId })
+            .andWhere("TokenLog.tokenType = :tokenType", { tokenType: tokenType })
+            .andWhere("TokenLog.isValid = 1")
             .getMany();
         previousTokens.forEach(async (token) => {
             token.isValid = false;
@@ -73,9 +73,9 @@ let TokenLogger = class TokenLogger {
     async AddNewTokenLog(token, duration, tokenType, identityId) {
         let clearResponse = await this.ClearPreviousTokens(tokenType, identityId);
         if (clearResponse !== true)
-            throw new Error('Token clear belaj');
+            throw new Error("Token clear belaj");
         let tokenLog = new Entities_1.TokenLog();
-        tokenLog.identityId = identityId;
+        tokenLog.userId = identityId;
         tokenLog.token = token;
         tokenLog.duration = StringTimeToSeconds(duration);
         tokenLog.isValid = true;

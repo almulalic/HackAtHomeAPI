@@ -4,7 +4,7 @@ export declare enum GridFilterType {
     Contains = 3
 }
 export declare enum RoleTypes {
-    Customer = 0,
+    User = 0,
     Admin = 1
 }
 export declare enum ImageType {

@@ -1,6 +1,7 @@
+import { User } from "./User";
 export declare class TokenLog {
     id: number;
-    identityId: number;
+    userId: number;
     token: string;
     tokenType: number;
     isValid: boolean;
@@ -8,4 +9,5 @@ export declare class TokenLog {
     expiresAt: Date;
     createdAt: Date;
     modifiedAt: Date;
+    user: User;
 }

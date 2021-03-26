@@ -1,5 +1,5 @@
-import { Customer } from "../../../Models/Entities";
-export declare class RegisterDTO extends Customer {
+import { User } from "../../../Models/Entities";
+export declare class RegisterDTO extends User {
     firstName: string;
     lastName: string;
     email: string;
