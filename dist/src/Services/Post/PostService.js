@@ -16,15 +16,18 @@ exports.PostService = void 0;
 const typeorm_1 = require("typeorm");
 const common_1 = require("@nestjs/common");
 const typeorm_2 = require("@nestjs/typeorm");
+const Entities_1 = require("../../Models/Entities");
+const Common_1 = require("../../Common");
 let PostService = class PostService {
     constructor(EntityManager) {
         this.EntityManager = EntityManager;
     }
-    async GetAllPosts(email) {
-        throw new Error("Method not implemented.");
+    async GetAllPosts(filterParams) {
+        return await (await this.EntityManager.getRepository(Entities_1.Post).createQueryBuilder().getMany()).filter(x => x.categoryId == filterParams.categoryId);
     }
     async CreatePost(body) {
-        throw new Error("Method not implemented.");
+        await this.EntityManager.getRepository(Entities_1.Post).insert(body);
+        return "Uspjesno dodan Post";
     }
 };
 PostService = __decorate([

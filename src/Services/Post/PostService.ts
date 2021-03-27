@@ -3,6 +3,8 @@ import { Injectable } from "@nestjs/common";
 import { InjectEntityManager } from "@nestjs/typeorm";
 import { IPostService } from "./../Contracts/IPostService";
 import { PostBodyDTO } from "./DTO/PostBodyDTO";
+import { Post } from "src/Models/Entities";
+import { PostFilterDTO } from "./DTO/PostFilterDTO";
 
 @Injectable()
 export class PostService implements IPostService {
@@ -11,11 +13,15 @@ export class PostService implements IPostService {
     private EntityManager: EntityManager
   ) {}
 
-  public async GetAllPosts(email: string): Promise<boolean> {
-    throw new Error("Method not implemented.");
+  public async GetAllPosts(filterParams : PostFilterDTO): Promise<Post[]> {
+    let t : Post[] = await this.EntityManager.getRepository(Post).createQueryBuilder().getMany();
+    if(filterParams.categoryId >= 0)
+      return t.filter(x => x.categoryId==filterParams.categoryId);
+    else return t;
   }
 
   public async CreatePost(body: PostBodyDTO): Promise<string> {
-    throw new Error("Method not implemented.");
+    await this.EntityManager.getRepository(Post).insert(body);
+    return "Uspjesno dodan Post";
   }
 }
