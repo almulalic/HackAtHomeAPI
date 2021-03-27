@@ -1,8 +1,24 @@
 import { Module } from "@nestjs/common";
-import { DbModule, IdentityModule, PostModule, TokenLogModule } from "./Modules";
+import {
+  DbModule,
+  IdentityModule,
+  PostModule,
+  OrderModule,
+  AcceptedOrderModule,
+  TokenLogModule,
+  WebhookModule,
+} from "./Modules";
 
 @Module({
-  imports: [DbModule, IdentityModule, PostModule, TokenLogModule],
+  imports: [
+    DbModule,
+    IdentityModule,
+    PostModule,
+    OrderModule,
+    AcceptedOrderModule,
+    TokenLogModule,
+    WebhookModule,
+  ],
 
   exports: [TokenLogModule],
 })

@@ -13,7 +13,15 @@ let AppModule = class AppModule {
 };
 AppModule = __decorate([
     common_1.Module({
-        imports: [Modules_1.DbModule, Modules_1.IdentityModule, Modules_1.PostModule, Modules_1.TokenLogModule],
+        imports: [
+            Modules_1.DbModule,
+            Modules_1.IdentityModule,
+            Modules_1.PostModule,
+            Modules_1.OrderModule,
+            Modules_1.AcceptedOrderModule,
+            Modules_1.TokenLogModule,
+            Modules_1.WebhookModule,
+        ],
         exports: [Modules_1.TokenLogModule],
     })
 ], AppModule);

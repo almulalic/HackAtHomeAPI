@@ -1,4 +1,6 @@
-export { User } from "./User";
+export { AcceptedOrder } from "./AcceptedOrder";
+export { Category } from "./Category";
 export { Post } from "./Post";
 export { TokenLog } from "./TokenLog";
-export { Category } from "./Category";
+export { Order } from "./Order";
+export { User } from "./User";

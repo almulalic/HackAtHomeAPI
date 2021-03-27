@@ -11,6 +11,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
 const typeorm_1 = require("typeorm");
+const AcceptedOrder_1 = require("./AcceptedOrder");
+const Order_1 = require("./Order");
 const Post_1 = require("./Post");
 const TokenLog_1 = require("./TokenLog");
 let User = class User {
@@ -77,6 +79,14 @@ __decorate([
     typeorm_1.Column("datetime", { name: "archivedAt", nullable: true }),
     __metadata("design:type", Date)
 ], User.prototype, "archivedAt", void 0);
+__decorate([
+    typeorm_1.OneToMany(() => AcceptedOrder_1.AcceptedOrder, (acceptedorder) => acceptedorder.courrier),
+    __metadata("design:type", Array)
+], User.prototype, "acceptedorders", void 0);
+__decorate([
+    typeorm_1.OneToMany(() => Order_1.Order, (order) => order.user),
+    __metadata("design:type", Array)
+], User.prototype, "orders", void 0);
 __decorate([
     typeorm_1.OneToMany(() => Post_1.Post, (post) => post.user),
     __metadata("design:type", Array)

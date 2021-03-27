@@ -14,7 +14,7 @@ export class PostController {
   }
 
   @Post("/createPost")
-  public async CreatePost(@Body() body:PostBodyDTO): Promise<OkResponse> {
+  public async CreatePost(@Body() body: PostBodyDTO): Promise<OkResponse> {
     return Ok(await this.PostService.CreatePost(body));
   }
 }

@@ -26,7 +26,7 @@ DbModule = __decorate([
                 database: DB_TABLE_NAME,
                 synchronize: Boolean(Number(DB_SYNC)),
                 logging: Boolean(Number(DB_LOGGING)),
-                entities: [Entities_1.User, Entities_1.Post, Entities_1.Category, Entities_1.TokenLog],
+                entities: [Entities_1.User, Entities_1.Post, Entities_1.Category, Entities_1.AcceptedOrder, Entities_1.Order, Entities_1.TokenLog],
                 cli: {
                     entitiesDir: "src/Models/Entities",
                     migrationsDir: "src/Models/Migrations",

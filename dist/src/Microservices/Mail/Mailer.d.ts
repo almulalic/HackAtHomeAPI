@@ -1,4 +1,4 @@
-import { User } from "../../Models/Entities/User";
+import { User } from "../../Models/Entities";
 export declare class Mailer {
     static SendConfirmationEmail: (identity: User, token: string) => Promise<string>;
     static ResendConfirmationEmail: (identity: User, token: string) => Promise<string>;

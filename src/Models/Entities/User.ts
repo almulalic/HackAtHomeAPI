@@ -1,4 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { AcceptedOrder } from "./AcceptedOrder";
+import { Order } from "./Order";
 import { Post } from "./Post";
 import { TokenLog } from "./TokenLog";
 
@@ -51,6 +53,12 @@ export class User {
 
   @Column("datetime", { name: "archivedAt", nullable: true })
   archivedAt: Date | null;
+
+  @OneToMany(() => AcceptedOrder, (acceptedorder) => acceptedorder.courrier)
+  acceptedorders: AcceptedOrder[];
+
+  @OneToMany(() => Order, (order) => order.user)
+  orders: Order[];
 
   @OneToMany(() => Post, (post) => post.user)
   posts: Post[];
